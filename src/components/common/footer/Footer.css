@@ -1,0 +1,77 @@
+.footer{
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+}
+
+.row{
+  flex-direction: row;
+}
+
+.column{
+  flex-direction: column;
+}
+
+.jc-center{
+  justify-content: center;
+}
+
+.full-width{
+  width: 100%;
+}
+
+.logo {
+  animation: logo-spin infinite 10s linear;
+  vertical-align: middle;
+  height: 20px;
+}
+
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.icon {
+  height: 18px;
+  margin-right: 1px;
+  margin-left: 1px;
+  transition: all 200ms ease-in;
+}
+
+.icon:hover {
+  transform: scale(1.3, 1.3);
+  transition: all 200ms ease-in;
+}
+
+.icon-large {
+  height: 30px;
+  margin-right: 1px;
+  margin-left: 1px;
+  transition: all 200ms ease-in;
+}
+
+.icon-large:hover {
+  transform: scale(1.3, 1.3);
+  transition: all 200ms ease-in;
+}
+
+.icon-med {
+  height: 22px;
+  margin-right: 1px;
+  margin-left: 1px;
+  transition: all 200ms ease-in;
+}
+
+.icon-med:hover {
+  transform: scale(1.3, 1.3);
+  transition: all 200ms ease-in;
+}
+
+.footer-text {
+  font-size: small;
+}
