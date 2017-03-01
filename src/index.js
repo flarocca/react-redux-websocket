@@ -1,9 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './containers/App';
-import Chat from './containers/Chat';
-import NoMatch from './containers/NoMatch';
-import './index.css';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './containers/App'
+import Chat from './containers/Chat'
+import NoMatch from './containers/NoMatch'
+import './index.css'
 import { createStore, applyMiddleware } from 'redux'
 import reducer from './reducers/index'
 import { Provider } from 'react-redux'
@@ -20,10 +20,11 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path="/" component={App} />
-      <Route path="/chat/:chatid/participant/:participantid" component={Chat} />
-      <Route path="*" component={NoMatch} />
+      <Route path='/' component={App} />
+      <Route path='/chat/:chatid/participant/:participantid' component={Chat} />
+      <Route path='/chat/:chatid' component={Chat} />
+      <Route path='*' component={NoMatch} />
     </Router>
   </Provider>,
   document.getElementById('root')
-);
+)

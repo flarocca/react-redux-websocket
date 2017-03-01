@@ -40,7 +40,6 @@
 }
 
 .input{
-  flex: 1;
   height: 60px;
   line-height: 60px;
   font-size: 30px;
@@ -150,4 +149,31 @@
 .send-icon{
   height: 30px;
   width: 30px;
+}
+
+.modal{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.inputModal{
+  display: flex;
+  background-color: rgb(91, 164, 215);
+}
+
+.optionModal{
+  background-color: rgb(91, 164, 215);
+  width: 30%;
+  align-self: center;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  border: solid 3px rgb(91, 164, 215);
 }

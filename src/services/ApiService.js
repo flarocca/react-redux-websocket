@@ -4,11 +4,11 @@ export default class ApiService {
     _headers.append('Content-Type', 'application/json');
 
     let form = {
-      "name": name
+      'name': name
     };
 
     try {
-      return fetch("http://localhost:3000/api/chat/create", {
+      return fetch('http://localhost:3000/api/chat/create', {
         method: 'POST',
         headers: _headers,
         body: JSON.stringify(form)
@@ -65,17 +65,17 @@ export default class ApiService {
   }
 
   static sendMessage(chatId, name, message) {
-    var _headers = new Headers();
-    _headers.append('Content-Type', 'application/json');
+    let _headers = new Headers()
+    _headers.append('Content-Type', 'application/json')
 
     let form = {
-      "chatId": chatId,
-      "name": name,
-      "message": message
-    };
+      'chatId': chatId,
+      'name': name,
+      'message': message
+    }
 
     try {
-      return fetch("http://localhost:8089/api/message", {
+      return fetch('http://localhost:3000/api/message', {
         method: 'PUT',
         headers: _headers,
         body: JSON.stringify(form)
@@ -84,34 +84,34 @@ export default class ApiService {
           if (response.ok) {
             return response.json()
               .then((responseData) => {
-                return responseData;
-              });
+                return responseData
+              })
           }
 
           return response.json()
             .then((error) => {
-              return Promise.reject(error);
-            });
+              return Promise.reject(error)
+            })
         })
         .catch((error) => {
-          return Promise.reject(error);
-        });
+          return Promise.reject(error)
+        })
     } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject(error)
     }
   }
 
-  static leaveChat(chatId, name) {
-    var _headers = new Headers();
-    _headers.append('Content-Type', 'application/json');
+  static leaveChat (chatId, name) {
+    let _headers = new Headers()
+    _headers.append('Content-Type', 'application/json')
 
     let form = {
-      "chatId": chatId,
-      "name": name
-    };
+      'chatId': chatId,
+      'name': name
+    }
 
     try {
-      return fetch("http://localhost:8089/api/chat", {
+      return fetch ('http://localhost:3000/api/chat', {
         method: 'DELETE',
         headers: _headers,
         body: JSON.stringify(form)
@@ -120,20 +120,55 @@ export default class ApiService {
           if (response.ok) {
             return response.json()
               .then((responseData) => {
-                return responseData;
-              });
+                return responseData
+              })
           }
 
           return response.json()
             .then((error) => {
-              return Promise.reject(error);
-            });
+              return Promise.reject(error)
+            })
         })
         .catch((error) => {
-          return Promise.reject(error);
-        });
+          return Promise.reject(error)
+        })
     } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject(error)
+    }
+  }
+
+  static addParticipant(chatId, name) {
+    let _headers = new Headers()
+    _headers.append('Content-Type', 'application/json')
+
+    let form = {
+      'name': name
+    }
+
+    try {
+      return fetch ('http://localhost:3000/api/chat/' + chatId + '/participant', {
+        method: 'PUT',
+        headers: _headers,
+        body: JSON.stringify(form)
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+              .then((responseData) => {
+                return responseData
+              })
+          }
+
+          return response.json()
+            .then((error) => {
+              return Promise.reject(error)
+            })
+        })
+        .catch((error) => {
+          return Promise.reject(error)
+        })
+    } catch (error) {
+      return Promise.reject(error)
     }
   }
 }

@@ -7,11 +7,11 @@ import './App.css';
 // import ActivityIndicator from '../components/common/ActivityIndicator'
 
 class NoMatch extends Component {
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    // this._renderWaiting = this._renderWaiting.bind(this)
-  }
+  //   // this._renderWaiting = this._renderWaiting.bind(this)
+  // }
 
   // render() {
   //   return (
@@ -24,11 +24,10 @@ class NoMatch extends Component {
   //   );
   // }
 
-  render() {
+  render () {
     return (
-      <div className="NoMatch">
-      </div>
-    );
+      <div className='NoMatch' />
+    )
   }
 
   // _renderWaiting() {

@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import * as actions from '../actions/index'
-import { browserHistory } from 'react-router';
+import { browserHistory } from 'react-router'
 
-const OPTION_CLOSED = '70px';
-const OPTION_OPENED = '180px';
-const OPTION_JOIN_CLOSED = '70px';
-const OPTION_JOIN_OPENED = '250px';
+const OPTION_CLOSED = '70px'
+const OPTION_OPENED = '180px'
+const OPTION_JOIN_CLOSED = '70px'
+const OPTION_JOIN_OPENED = '250px'
 const DISPLAY_OPTION_CLOSED = 'none'
 const DISPLAY_OPTION_OPENED = 'flex'
 const BORDER_STYLE_RED = {
@@ -21,24 +21,24 @@ const BORDER_STYLE_NORMAL = {
 }
 
 class Body extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
 
     this._newChat = this._newChat.bind(this)
     this._joinToChat = this._joinToChat.bind(this)
     this._startNewChat = this._startNewChat.bind(this)
-    this._joinToChatSelected = this._joinToChatSelected.bind(this);
+    this._joinToChatSelected = this._joinToChatSelected.bind(this)
     this._getName = this._getName.bind(this)
     this._getJoinId = this._getJoinId.bind(this)
-    this._getJoinName = this._getJoinName.bind(this);
+    this._getJoinName = this._getJoinName.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.goToChatPage)
-      browserHistory.push(nextProps.chatPageUrl);
+      browserHistory.push(nextProps.chatPageUrl)
   }
 
-  render() {
+  render () {
     return (
       <div className='container column' >
         <div className='container column option' style={{ height: this.props.newChatSelected ? OPTION_OPENED : OPTION_CLOSED }}>

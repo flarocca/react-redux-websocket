@@ -62,6 +62,27 @@ export const errorGettingChatInfo = (errorMessage) => {
   }
 }
 
+export const addingParticipant = () => {
+  return {
+    type: 'ADDING_PARTICIPANT'
+  }
+}
+
+export const participantAdded = (chatid, participant) => {
+  return {
+    type: 'PARTICIPANT_ADDED',
+    chatid,
+    participant
+  }
+}
+
+export const errorAddingParticipant = (errorMessage) => {
+  return {
+    type: 'ERROR_ADDING_PARTICIPANT',
+    errorMessage
+  }
+}
+
 export function createNewChat(name) {
   return dispatch => {
     if (!name) {
@@ -69,20 +90,35 @@ export function createNewChat(name) {
     } else {
       dispatch(creatingNewChat(name))
       return ApiService.createNewChat(name)
-        .then(json => { return json.resp; })
+        .then(json => { return json.resp })
         .then(resp => dispatch(newChatCreated(resp.chat, resp.participant)))
         .catch(error => dispatch(errorCreatingChat(error.message)))
     }
   }
 }
 
-export function getChat(chatid, participantid) {
+export function getChat (chatid, participantid) {
   return dispatch => {
     dispatch(gettingChatInfo())
     return ApiService.getChatInfo(chatid, participantid)
-      .then(json => { return json.resp; })
+      .then(json => { return json.resp })
       .then(chat => dispatch(chatInfoReceived(chat)))
       .catch(error => dispatch(errorGettingChatInfo(error.message)))
+  }
+}
+
+export function addParticipant (chatid, participantName) {
+  return dispatch => {
+    if (!participantName) {
+      dispatch(errorAddingParticipant('Name is required.'))
+    } else {
+      dispatch(addingParticipant())
+      return ApiService.addParticipant(chatid, participantName)
+        .then(json => { return json.resp })
+        .then(resp => { return resp.participant })
+        .then(participant => dispatch(participantAdded(chatid, participant)))
+        .catch(error => dispatch(errorAddingParticipant(error.message)))
+    }
   }
 }
 
