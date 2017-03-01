@@ -21,7 +21,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path="/" component={App} />
-      <Route path="/chat?chatid=:chatid&participantid=:participantid" component={Chat} />
+      <Route path="/chat/:chatid/participant/:participantid" component={Chat} />
       <Route path="*" component={NoMatch} />
     </Router>
   </Provider>,

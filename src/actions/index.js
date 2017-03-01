@@ -42,6 +42,26 @@ export const startJoinToChat = (id, name) => {
   }
 }
 
+export const gettingChatInfo = () => {
+  return {
+    type: 'GETTING_CHAT_INFO'
+  }
+}
+
+export const chatInfoReceived = (chat) => {
+  return {
+    type: 'CHAT_INFO_RECEIVED',
+    chat
+  }
+}
+
+export const errorGettingChatInfo = (errorMessage) => {
+  return {
+    type: 'ERROR_GETTING_INFO_CHAT',
+    errorMessage
+  }
+}
+
 export function createNewChat(name) {
   return dispatch => {
     if (!name) {
@@ -55,3 +75,27 @@ export function createNewChat(name) {
     }
   }
 }
+
+export function getChat(chatid, participantid) {
+  return dispatch => {
+    dispatch(gettingChatInfo())
+    return ApiService.getChatInfo(chatid, participantid)
+      .then(json => { return json.resp; })
+      .then(chat => dispatch(chatInfoReceived(chat)))
+      .catch(error => dispatch(errorGettingChatInfo(error.message)))
+  }
+}
+
+// export function openChatWebSocket(chatid, participantid) {
+//   return dispatch => {
+//     if (!name) {
+//       dispatch(errorCreatingChat('Name is required'))
+//     } else {
+//       dispatch(creatingNewChat(name))
+//       return ApiService.createNewChat(name)
+//         .then(json => { return json.resp; })
+//         .then(resp => dispatch(newChatCreated(resp.chat, resp.participant)))
+//         .catch(error => dispatch(errorCreatingChat(error.message)))
+//     }
+//   }
+// }

@@ -18,7 +18,7 @@ export default class ActivityIndicator extends Component {
     }
 
     return (
-      <div className='activity-indicator-body'>
+      <div className={this.props.mainClassName || 'activity-indicator-body'}>
         <div {...props} className={(props.className || '') + ' spinner'}>
           {bars}
         </div>

@@ -1,6 +1,6 @@
 export default class ApiService {
   static createNewChat(name) {
-    var _headers = new Headers();
+    let _headers = new Headers();
     _headers.append('Content-Type', 'application/json');
 
     let form = {
@@ -12,6 +12,36 @@ export default class ApiService {
         method: 'POST',
         headers: _headers,
         body: JSON.stringify(form)
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+              .then((responseData) => {
+                return responseData;
+              });
+          }
+
+          return response.json()
+            .then((error) => {
+              return Promise.reject(error);
+            });
+        })
+        .catch((error) => {
+          return Promise.reject(error);
+        });
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  static getChatInfo(chatid, participantid) {
+    let _headers = new Headers();
+    _headers.append('Content-Type', 'application/json');
+
+    try {
+      return fetch('http://localhost:3000/api/chat/' + chatid + '/participant/' + participantid, {
+        method: 'GET',
+        headers: _headers
       })
         .then((response) => {
           if (response.ok) {
