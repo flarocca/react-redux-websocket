@@ -19,10 +19,10 @@ export const creatingNewChat = (name) => {
   }
 }
 
-export const newChatCreated = (chatid, participant) => {
+export const newChatCreated = (chat, participant) => {
   return {
     type: 'NEW_CHAT_CREATED',
-    chatid,
+    chat,
     participant
   }
 }
@@ -48,10 +48,11 @@ export const gettingChatInfo = () => {
   }
 }
 
-export const chatInfoReceived = (chat) => {
+export const chatInfoReceived = (chat, participant) => {
   return {
     type: 'CHAT_INFO_RECEIVED',
-    chat
+    chat,
+    participant
   }
 }
 
@@ -68,10 +69,10 @@ export const addingParticipant = () => {
   }
 }
 
-export const participantAdded = (chatid, participant) => {
+export const participantAdded = (chat, participant) => {
   return {
     type: 'PARTICIPANT_ADDED',
-    chatid,
+    chat,
     participant
   }
 }
@@ -83,7 +84,54 @@ export const errorAddingParticipant = (errorMessage) => {
   }
 }
 
-export function createNewChat(name) {
+export const pageReloaded = () => {
+  return {
+    type: 'PAGE_RELOADED'
+  }
+}
+
+export const openingWebsocket = () => {
+  return {
+    type: 'OPENING_WEBSOCKET'
+  }
+}
+
+export const websocketOpened = () => {
+  return {
+    type: 'WEBSOCKET_OPENED'
+  }
+}
+
+export const errorOpeningWebsocket = (errorMessage) => {
+  return {
+    type: 'ERROR_OPENING_WEBSOCKET',
+    errorMessage
+  }
+}
+
+export const newMessageNotification = (message, sender) => {
+  return {
+    type: 'NEW_MESSAGE_NOTIFICATION',
+    message,
+    sender
+  }
+}
+
+export const newParticipantNotification = (participant) => {
+  return {
+    type: 'NEW_PARTICIPANT_NOTIFICATION',
+    participant
+  }
+}
+
+export const removeParticipantNotification = (participant) => {
+  return {
+    type: 'REMOVE_PARTICIPANT_NOTIFICATION',
+    participant
+  }
+}
+
+export function createNewChat (name) {
   return dispatch => {
     if (!name) {
       dispatch(errorCreatingChat('Name is required'))
@@ -102,7 +150,7 @@ export function getChat (chatid, participantid) {
     dispatch(gettingChatInfo())
     return ApiService.getChatInfo(chatid, participantid)
       .then(json => { return json.resp })
-      .then(chat => dispatch(chatInfoReceived(chat)))
+      .then(resp => dispatch(chatInfoReceived(resp.chat, resp.participant)))
       .catch(error => dispatch(errorGettingChatInfo(error.message)))
   }
 }
@@ -115,23 +163,37 @@ export function addParticipant (chatid, participantName) {
       dispatch(addingParticipant())
       return ApiService.addParticipant(chatid, participantName)
         .then(json => { return json.resp })
-        .then(resp => { return resp.participant })
-        .then(participant => dispatch(participantAdded(chatid, participant)))
+        .then(resp => dispatch(participantAdded(resp.chat, resp.participant)))
         .catch(error => dispatch(errorAddingParticipant(error.message)))
     }
   }
 }
 
-// export function openChatWebSocket(chatid, participantid) {
-//   return dispatch => {
-//     if (!name) {
-//       dispatch(errorCreatingChat('Name is required'))
-//     } else {
-//       dispatch(creatingNewChat(name))
-//       return ApiService.createNewChat(name)
-//         .then(json => { return json.resp; })
-//         .then(resp => dispatch(newChatCreated(resp.chat, resp.participant)))
-//         .catch(error => dispatch(errorCreatingChat(error.message)))
-//     }
-//   }
-// }
+export function openChatWebSocket (chatid) {
+  return dispatch => {
+    dispatch(openingWebsocket())
+    return ApiService.startWebsocketConnection()
+      .then(socket => {
+        dispatch(websocketOpened())
+
+        socket.on('new-message', (data) => {
+          if (data.chatid == chatid) {
+            dispatch(newMessageNotification(data.message, data.participantid))
+          }
+        })
+
+        socket.on('new-participant', (data) => {
+          if (data.chatid == chatid) {
+            dispatch(newParticipantNotification(data.participantid))
+          }
+        })
+
+        socket.on('remove-participant', (data) => {
+          if (data.chatid == chatid) {
+            dispatch(removeParticipantNotification(data.participantid))
+          }
+        })
+      })
+      .catch(error => dispatch(errorOpeningWebsocket(error.message)))
+  }
+}

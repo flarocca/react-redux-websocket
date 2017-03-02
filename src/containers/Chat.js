@@ -20,7 +20,7 @@ const BORDER_STYLE_NORMAL = {
 }
 
 class Chat extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this._renderLoadingChat = this._renderLoadingChat.bind(this)
@@ -30,16 +30,21 @@ class Chat extends Component {
     this._getName = this._getName.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidMount () {
     if (this.props.params.chatid && this.props.params.participantid) {
       this.props.dispatch(actions.getChat(this.props.params.chatid, this.props.params.participantid))
-      // this.props.dispatch(actions.openChatWebSocket())
-    } else if (nextProps.participant) {
+      this.props.dispatch(actions.openChatWebSocket(this.props.params.chatid, this.props.params.participantid))
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.reloadPage) {
+      this.props.dispatch(actions.pageReloaded())
       browserHistory.push(nextProps.chatPageUrl)
     }
   }
 
-  render() {
+  render () {
     return (
       <div className='Chat column'>
         <HeaderChat chatid={this.props.params.chatid} />
@@ -67,7 +72,7 @@ class Chat extends Component {
     )
   }
 
-  _renderLoadingChat() {
+  _renderLoadingChat () {
     if (this.props.loadingChatInfo) {
       return (
         <ActivityIndicator title={'Loading chat info...'} />
@@ -77,12 +82,12 @@ class Chat extends Component {
     }
   }
 
-  _renderParticipants() {
+  _renderParticipants () {
     if (!this.props.loadingChatInfo && !this.props.errorLoadingChat && this.props.chat) {
       return (
         <ul>
           {this.props.chat.participants.map(function (participant) {
-            return <li>{participant.name}</li>
+            return <li key={participant.id}>{participant.name}</li>
           })}
         </ul>
       )
@@ -91,8 +96,8 @@ class Chat extends Component {
     }
   }
 
-  _renderParticipantNameEntry() {
-    if (!this.props.params.participantid) {
+  _renderParticipantNameEntry () {
+    if (!this.props.params.participantid && !this.props.participant) {
       return (
         <div className='modal'>
           <div className='container column optionModal'>
@@ -117,13 +122,13 @@ class Chat extends Component {
     }
   }
 
-  _nameCompleted(e) {
+  _nameCompleted (e) {
     e.preventDefault()
     let name = this._getName()
     this.props.dispatch(actions.addParticipant(this.props.params.chatid, name))
   }
 
-  _getName() {
+  _getName () {
     return this.refs.enterName.value
   }
 }
@@ -136,7 +141,8 @@ let mapStateToProps = state => {
     errorAddingParticipant: state.chatReducers.errorAddingParticipant,
     participant: state.chatReducers.participant,
     chat: state.chatReducers.chat,
-    chatPageUrl: state.chatReducers.chatPageUrl
+    chatPageUrl: state.chatReducers.chatPageUrl,
+    reloadPage: state.chatReducers.reloadPage
   }
 }
 

@@ -1,5 +1,9 @@
+let io = require('socket.io-client')
+let socket = null
+
 export default class ApiService {
-  static createNewChat(name) {
+
+  static createNewChat (name) {
     let _headers = new Headers();
     _headers.append('Content-Type', 'application/json');
 
@@ -34,7 +38,7 @@ export default class ApiService {
     }
   }
 
-  static getChatInfo(chatid, participantid) {
+  static getChatInfo (chatid, participantid) {
     let _headers = new Headers();
     _headers.append('Content-Type', 'application/json');
 
@@ -64,7 +68,7 @@ export default class ApiService {
     }
   }
 
-  static sendMessage(chatId, name, message) {
+  static sendMessage (chatId, name, message) {
     let _headers = new Headers()
     _headers.append('Content-Type', 'application/json')
 
@@ -137,7 +141,7 @@ export default class ApiService {
     }
   }
 
-  static addParticipant(chatId, name) {
+  static addParticipant (chatId, name) {
     let _headers = new Headers()
     _headers.append('Content-Type', 'application/json')
 
@@ -170,5 +174,16 @@ export default class ApiService {
     } catch (error) {
       return Promise.reject(error)
     }
+  }
+
+  static startWebsocketConnection () {
+    return new Promise((resolve, reject) => {
+      try {
+        socket = io({ path: 'http://localhost:3000/api/chat/connect' })
+        return resolve(socket)
+      } catch (error) {
+        return reject(error)
+      }
+    })
   }
 }

@@ -38,7 +38,7 @@ const homeReducers = (state = initialState, action) => {
         chatid: action.chatid,
         participant: action.participant,
         goToChatPage: true,
-        chatPageUrl: '/chat/' + action.chatid + '/participant/' + action.participant.id
+        chatPageUrl: '/chat/' + action.chat.id + '/participant/' + action.participant.id
       })
     case 'ERROR_CREATING_CHAT':
       return Object.assign({}, state, {
