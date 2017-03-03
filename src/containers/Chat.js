@@ -20,7 +20,7 @@ const BORDER_STYLE_NORMAL = {
 }
 
 class Chat extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this._renderLoadingChat = this._renderLoadingChat.bind(this)
@@ -28,23 +28,25 @@ class Chat extends Component {
     this._renderParticipantNameEntry = this._renderParticipantNameEntry.bind(this)
     this._nameCompleted = this._nameCompleted.bind(this)
     this._getName = this._getName.bind(this)
+    this._sendMessage = this._sendMessage.bind(this);
+    this._getMessage = this._getMessage.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     if (this.props.params.chatid && this.props.params.participantid) {
       this.props.dispatch(actions.getChat(this.props.params.chatid, this.props.params.participantid))
       this.props.dispatch(actions.openChatWebSocket(this.props.params.chatid, this.props.params.participantid))
     }
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.reloadPage) {
       this.props.dispatch(actions.pageReloaded())
       browserHistory.push(nextProps.chatPageUrl)
     }
   }
 
-  render () {
+  render() {
     return (
       <div className='Chat column'>
         <HeaderChat chatid={this.props.params.chatid} />
@@ -58,11 +60,11 @@ class Chat extends Component {
             <div className='container row send-message'>
               <textarea
                 type='text'
-                id='join_id'
+                id='message'
                 className='input-message'
                 placeholder={'Type your message...'}
-                ref='join_id' />
-              <button className='send-msg-btn'><Send innerColor='white' className='send-icon' /></button>
+                ref='message' />
+              <button className='send-msg-btn' onClick={this._sendMessage}><Send innerColor='white' className='send-icon' /></button>
             </div>
           </div>
         </div>
@@ -72,7 +74,7 @@ class Chat extends Component {
     )
   }
 
-  _renderLoadingChat () {
+  _renderLoadingChat() {
     if (this.props.loadingChatInfo) {
       return (
         <ActivityIndicator title={'Loading chat info...'} />
@@ -82,7 +84,7 @@ class Chat extends Component {
     }
   }
 
-  _renderParticipants () {
+  _renderParticipants() {
     if (!this.props.loadingChatInfo && !this.props.errorLoadingChat && this.props.chat) {
       return (
         <ul>
@@ -96,7 +98,7 @@ class Chat extends Component {
     }
   }
 
-  _renderParticipantNameEntry () {
+  _renderParticipantNameEntry() {
     if (!this.props.params.participantid && !this.props.participant) {
       return (
         <div className='modal'>
@@ -122,14 +124,25 @@ class Chat extends Component {
     }
   }
 
-  _nameCompleted (e) {
+  _nameCompleted(e) {
     e.preventDefault()
     let name = this._getName()
     this.props.dispatch(actions.addParticipant(this.props.params.chatid, name))
   }
 
-  _getName () {
+  _sendMessage(e) {
+    e.preventDefault()
+    let message = this._getMessage()
+    this.props.dispatch(actions.sendMessage(this.props.params.chatid, this.props.params.participantid, message))
+    this.refs.message.value = null
+  }
+
+  _getName() {
     return this.refs.enterName.value
+  }
+
+  _getMessage() {
+    return this.refs.message.value
   }
 }
 
@@ -142,7 +155,10 @@ let mapStateToProps = state => {
     participant: state.chatReducers.participant,
     chat: state.chatReducers.chat,
     chatPageUrl: state.chatReducers.chatPageUrl,
-    reloadPage: state.chatReducers.reloadPage
+    reloadPage: state.chatReducers.reloadPage,
+    messages: state.chatReducers.messages,
+    sendingMessage: state.chatReducers.sendingMessage,
+    errorSendingMessage: state.chatReducers.errorSendingMessage
   }
 }
 

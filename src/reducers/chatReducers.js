@@ -6,7 +6,10 @@ let initialState = {
   chat: null,
   participant: null,
   chatPageUrl: null,
-  reloadPage: false
+  reloadPage: false,
+  messages: [],
+  sendingMessage: false,
+  errorSendingMessage: null
 }
 
 const chatReducers = (state = initialState, action) => {
@@ -52,6 +55,44 @@ const chatReducers = (state = initialState, action) => {
       return Object.assign({}, state, {
         reloadPage: false
       })
+    case 'NEW_MESSAGE_NOTIFICATION':
+      return Object.assign({}, state, {
+        messages: [
+          ...state.messages,
+          {
+            message: action.message,
+            sender: action.sender,
+            timestamp: action.timestamp
+          }
+        ]
+      })
+    case 'NEW_PARTICIPANT_NOTIFICATION':
+      return Object.assign({}, state, {
+        chat: action.chat
+      })
+    case 'REMOVE_PARTICIPANT_NOTIFICATION':
+      return Object.assign({}, state, {
+        chat: action.chat
+      })
+
+
+    case 'SENDING_MESSAGE':
+      return Object.assign({}, state, {
+        sendingMessage: true,
+        errorSendingMessage: null
+      })
+    case 'MESSAGE_SENT':
+      return Object.assign({}, state, {
+        sendingMessage: false,
+        errorSendingMessage: null
+      })
+    case 'ERROR_SENDING_MESSAGE':
+      return Object.assign({}, state, {
+        sendingMessage: false,
+        errorSendingMessage: action.errorMessage
+      })
+
+
     default:
       return state
   }

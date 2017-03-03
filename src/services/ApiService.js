@@ -2,7 +2,6 @@ let io = require('socket.io-client')
 let socket = null
 
 export default class ApiService {
-
   static createNewChat (name) {
     let _headers = new Headers();
     _headers.append('Content-Type', 'application/json');
@@ -179,7 +178,7 @@ export default class ApiService {
   static startWebsocketConnection () {
     return new Promise((resolve, reject) => {
       try {
-        socket = io({ path: 'http://localhost:3000/api/chat/connect' })
+        socket = io.connect('http://localhost:3000/api/chat/connect', { path:'/api/chat/connect', reconnect: true, forceNew: true })
         return resolve(socket)
       } catch (error) {
         return reject(error)

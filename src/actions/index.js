@@ -109,11 +109,12 @@ export const errorOpeningWebsocket = (errorMessage) => {
   }
 }
 
-export const newMessageNotification = (message, sender) => {
+export const newMessageNotification = (message, sender, timestamp) => {
   return {
     type: 'NEW_MESSAGE_NOTIFICATION',
     message,
-    sender
+    sender,
+    timestamp
   }
 }
 
@@ -128,6 +129,25 @@ export const removeParticipantNotification = (participant) => {
   return {
     type: 'REMOVE_PARTICIPANT_NOTIFICATION',
     participant
+  }
+}
+
+export const sendingMessage = () => {
+  return {
+    type: 'SENDING_MESSAGE'
+  }
+}
+
+export const messageSent = () => {
+  return {
+    type: 'MESSAGE_SENT'
+  }
+}
+
+export const errorSendingMessage = (errorMessage) => {
+  return {
+    type: 'ERROR_SENDING_MESSAGE',
+    errorMessage
   }
 }
 
@@ -175,25 +195,42 @@ export function openChatWebSocket (chatid) {
     return ApiService.startWebsocketConnection()
       .then(socket => {
         dispatch(websocketOpened())
+        socket.on('connect', function(){
+            console.log('Connected to Stream Server');
+            socket.on('new-message', function(data){
+              console.log('Connected to Stream Server');
+            });
+        });
+
+        socket.connect()
 
         socket.on('new-message', (data) => {
           if (data.chatid == chatid) {
-            dispatch(newMessageNotification(data.message, data.participantid))
+            dispatch(newMessageNotification(data.message, data.participantid, data.timestamp))
           }
         })
 
-        socket.on('new-participant', (data) => {
-          if (data.chatid == chatid) {
-            dispatch(newParticipantNotification(data.participantid))
-          }
-        })
+        // socket.on('new-participant', (data) => {
+        //   if (data.chatid == chatid) {
+        //     dispatch(newParticipantNotification(data.participantid))
+        //   }
+        // })
 
-        socket.on('remove-participant', (data) => {
-          if (data.chatid == chatid) {
-            dispatch(removeParticipantNotification(data.participantid))
-          }
-        })
+        // socket.on('remove-participant', (data) => {
+        //   if (data.chatid == chatid) {
+        //     dispatch(removeParticipantNotification(data.participantid))
+        //   }
+        // })
       })
       .catch(error => dispatch(errorOpeningWebsocket(error.message)))
+  }
+}
+
+export function sendMessage(chatid, participantid, message) {
+  return dispatch => {
+    dispatch(sendingMessage())
+    return ApiService.sendMessage(chatid, participantid, message)
+      .then(() => dispatch(messageSent()))
+      .catch(error => dispatch(errorSendingMessage(error.message)))
   }
 }
