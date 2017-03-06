@@ -1,3 +1,5 @@
+const BASE_URL = '/examples/react-redux-websocket/'
+
 let initialState = {
   loadingChatInfo: false,
   addingParticipant: false,
@@ -43,7 +45,7 @@ const chatReducers = (state = initialState, action) => {
         addingParticipant: false,
         chat: action.chat,
         participant: action.participant,
-        chatPageUrl: '/chat/' + action.chat.id + '/participant/' + action.participant.id,
+        chatPageUrl: BASE_URL + 'chat/' + action.chat.id + '/participant/' + action.participant.id,
         reloadPage: true
       })
     case 'ERROR_ADDING_PARTICIPANT':
@@ -57,7 +59,7 @@ const chatReducers = (state = initialState, action) => {
         reloadPage: false
       })
     case 'NEW_MESSAGE_NOTIFICATION':
-      if (state.chat.id != action.chatid)
+      if (state.chat.id !== parseInt(action.chatid, 10))
         return state
 
       return Object.assign({}, state, {
@@ -71,7 +73,7 @@ const chatReducers = (state = initialState, action) => {
         ]
       })
     case 'NEW_PARTICIPANT_NOTIFICATION':
-      if (state.chat.id != action.chatid)
+      if (state.chat.id !== parseInt(action.chatid, 10))
         return state
 
       chat = Object.assign({}, state.chat)
@@ -80,13 +82,13 @@ const chatReducers = (state = initialState, action) => {
         chat
       })
     case 'REMOVE_PARTICIPANT_NOTIFICATION':
-      if (state.chat.id != action.chatid)
+      if (state.chat.id !== parseInt(action.chatid, 10))
         return state
 
       chat = Object.assign({}, state.chat)
       let pos = -1;
       for (let i = 0; i < chat.participants.length; i++) {
-        if (chat.participants[i].id == action.participant.id) {
+        if (chat.participants[i].id === action.participant.id) {
           pos = i
           break
         }

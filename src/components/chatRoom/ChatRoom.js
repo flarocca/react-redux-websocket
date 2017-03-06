@@ -46,7 +46,7 @@ export default class ChatRoom extends Component {
   }
 
   _keyPressed(e) {
-    if (e.key == 'Enter') {
+    if (e.key === 'Enter') {
       this._sendMessage(e)
     }
   }

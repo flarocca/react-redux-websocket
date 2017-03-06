@@ -1,3 +1,5 @@
+const BASE_URL = 'http://localhost:8081/api/chat/'
+
 export default class ApiService {
   static createNewChat(name) {
     let _headers = new Headers();
@@ -8,7 +10,7 @@ export default class ApiService {
     };
 
     try {
-      return fetch('http://localhost:3000/api/chat/create', {
+      return fetch(BASE_URL + 'create', {
         method: 'POST',
         headers: _headers,
         body: JSON.stringify(form)
@@ -39,7 +41,7 @@ export default class ApiService {
     _headers.append('Content-Type', 'application/json');
 
     try {
-      return fetch('http://localhost:3000/api/chat/' + chatid + '/participant/' + participantid, {
+      return fetch(BASE_URL + chatid + '/participant/' + participantid, {
         method: 'GET',
         headers: _headers
       })
@@ -73,44 +75,8 @@ export default class ApiService {
     }
 
     try {
-      return fetch('http://localhost:3000/api/chat/' + chatId + '/participant/' + participantid + '/message', {
+      return fetch(BASE_URL + chatId + '/participant/' + participantid + '/message', {
         method: 'PUT',
-        headers: _headers,
-        body: JSON.stringify(form)
-      })
-        .then((response) => {
-          if (response.ok) {
-            return response.json()
-              .then((responseData) => {
-                return responseData
-              })
-          }
-
-          return response.json()
-            .then((error) => {
-              return Promise.reject(error)
-            })
-        })
-        .catch((error) => {
-          return Promise.reject(error)
-        })
-    } catch (error) {
-      return Promise.reject(error)
-    }
-  }
-
-  static leaveChat(chatId, name) {
-    let _headers = new Headers()
-    _headers.append('Content-Type', 'application/json')
-
-    let form = {
-      'chatId': chatId,
-      'name': name
-    }
-
-    try {
-      return fetch('http://localhost:3000/api/chat', {
-        method: 'DELETE',
         headers: _headers,
         body: JSON.stringify(form)
       })
@@ -144,7 +110,7 @@ export default class ApiService {
     }
 
     try {
-      return fetch('http://localhost:3000/api/chat/' + chatId + '/participant', {
+      return fetch(BASE_URL + chatId + '/participant', {
         method: 'PUT',
         headers: _headers,
         body: JSON.stringify(form)
@@ -174,7 +140,7 @@ export default class ApiService {
     return new Promise((resolve, reject) => {
       try {
         let W3CWebSocket = require('websocket').w3cwebsocket;
-        let client = new W3CWebSocket('ws://localhost:3000/');
+        let client = new W3CWebSocket('ws://localhost:8081/');
         return resolve(client)
       } catch (error) {
         return reject(error)

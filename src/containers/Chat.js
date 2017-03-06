@@ -88,7 +88,7 @@ class Chat extends Component {
   }
 
   _renderParticipant(participant) {
-    if (this.props.params.participantid == participant.id)
+    if (parseInt(this.props.params.participantid, 10) === participant.id)
       return null
 
     return <li key={participant.id} style={{ paddingTop: '10px', fontSize: '20px' }}>{participant.name}</li>

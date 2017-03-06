@@ -1,3 +1,5 @@
+const BASE_URL = '/examples/react-redux-websocket/'
+
 const initialState = {
   newChatSelected: false,
   joinChatSelected: false,
@@ -38,7 +40,7 @@ const homeReducers = (state = initialState, action) => {
         chatid: action.chatid,
         participant: action.participant,
         goToChatPage: true,
-        chatPageUrl: '/chat/' + action.chat.id + '/participant/' + action.participant.id
+        chatPageUrl: BASE_URL + 'chat/' + action.chat.id + '/participant/' + action.participant.id
       })
     case 'ERROR_CREATING_CHAT':
       return Object.assign({}, state, {
@@ -65,7 +67,7 @@ const homeReducers = (state = initialState, action) => {
         chatid: action.chatid,
         participant: action.participant,
         goToChatPage: true,
-        chatPageUrl: '/chat/' + action.chat.id + '/participant/' + action.participant.id
+        chatPageUrl: BASE_URL + 'chat/' + action.chat.id + '/participant/' + action.participant.id
       })
     case 'ERROR_JOINING_TO_CHAT':
       return Object.assign({}, state, {
