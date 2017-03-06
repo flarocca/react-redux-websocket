@@ -13,6 +13,7 @@ let initialState = {
 }
 
 const chatReducers = (state = initialState, action) => {
+  let chat = null
   switch (action.type) {
     case 'GETTING_CHAT_INFO':
       return Object.assign({}, state, {
@@ -56,26 +57,46 @@ const chatReducers = (state = initialState, action) => {
         reloadPage: false
       })
     case 'NEW_MESSAGE_NOTIFICATION':
+      if (state.chat.id != action.chatid)
+        return state
+
       return Object.assign({}, state, {
         messages: [
           ...state.messages,
           {
             message: action.message,
-            sender: action.sender,
+            participant: action.participant,
             timestamp: action.timestamp
           }
         ]
       })
     case 'NEW_PARTICIPANT_NOTIFICATION':
+      if (state.chat.id != action.chatid)
+        return state
+
+      chat = Object.assign({}, state.chat)
+      chat.participants.push(action.participant)
       return Object.assign({}, state, {
-        chat: action.chat
+        chat
       })
     case 'REMOVE_PARTICIPANT_NOTIFICATION':
+      if (state.chat.id != action.chatid)
+        return state
+
+      chat = Object.assign({}, state.chat)
+      let pos = -1;
+      for (let i = 0; i < chat.participants.length; i++) {
+        if (chat.participants[i].id == action.participant.id) {
+          pos = i
+          break
+        }
+      }
+      if (pos > -1)
+        chat.participants.splice(pos, 1);
+
       return Object.assign({}, state, {
-        chat: action.chat
+        chat
       })
-
-
     case 'SENDING_MESSAGE':
       return Object.assign({}, state, {
         sendingMessage: true,
@@ -91,8 +112,6 @@ const chatReducers = (state = initialState, action) => {
         sendingMessage: false,
         errorSendingMessage: action.errorMessage
       })
-
-
     default:
       return state
   }

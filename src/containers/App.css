@@ -82,11 +82,12 @@
   position: absolute;
   flex: 1;
   top: 15%;
-  width: 90%;
+  width: 80%;
   height: 73%;
   align-self: center;
   margin-top: 20px;
   border-radius: 20px;
+  max-width: 1200px;
 }
 
 .member-list{
@@ -99,7 +100,7 @@
 
 .chat-room{
   display: flex;
-  width: 100%;
+  width: 80%;
   height: 100%;
   margin-left: 10px;
 }
@@ -136,6 +137,7 @@
   border-radius: 10px;
   background-color: rgb(91, 164, 215);
   margin-bottom: 10px;
+  overflow: auto;
 }
 
 .send-msg-btn{
@@ -176,4 +178,8 @@
   text-align: center;
   display: flex;
   border: solid 3px rgb(91, 164, 215);
+}
+
+ul {
+  list-style-type: none;
 }

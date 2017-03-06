@@ -34,14 +34,6 @@ export const errorCreatingChat = (errorMessage) => {
   }
 }
 
-export const startJoinToChat = (id, name) => {
-  return {
-    type: 'START_JOIN_TO_CHAT',
-    name,
-    id
-  }
-}
-
 export const gettingChatInfo = () => {
   return {
     type: 'GETTING_CHAT_INFO'
@@ -109,25 +101,28 @@ export const errorOpeningWebsocket = (errorMessage) => {
   }
 }
 
-export const newMessageNotification = (message, sender, timestamp) => {
+export const newMessageNotification = (message, participant, chatid, timestamp) => {
   return {
     type: 'NEW_MESSAGE_NOTIFICATION',
     message,
-    sender,
+    participant,
+    chatid,
     timestamp
   }
 }
 
-export const newParticipantNotification = (participant) => {
+export const newParticipantNotification = (chatid, participant) => {
   return {
     type: 'NEW_PARTICIPANT_NOTIFICATION',
+    chatid,
     participant
   }
 }
 
-export const removeParticipantNotification = (participant) => {
+export const removeParticipantNotification = (chatid, participant) => {
   return {
     type: 'REMOVE_PARTICIPANT_NOTIFICATION',
+    chatid,
     participant
   }
 }
@@ -151,7 +146,36 @@ export const errorSendingMessage = (errorMessage) => {
   }
 }
 
-export function createNewChat (name) {
+export const invalidInfoToJoin = (invalidChat, invalidName) => {
+  return {
+    type: 'INVALID_INFO_TO_JOIN',
+    invalidChat,
+    invalidName
+  }
+}
+
+export const joinningToChat = () => {
+  return {
+    type: 'JOINING_TO_CHAT'
+  }
+}
+
+export const joinedToChat = (chat, participant) => {
+  return {
+    type: 'JOINED_TO_CHAT',
+    chat,
+    participant
+  }
+}
+
+export const errorJoiningToChat = (errorMessage) => {
+  return {
+    type: 'ERROR_JOINING_TO_CHAT',
+    errorMessage
+  }
+}
+
+export function createNewChat(name) {
   return dispatch => {
     if (!name) {
       dispatch(errorCreatingChat('Name is required'))
@@ -165,7 +189,7 @@ export function createNewChat (name) {
   }
 }
 
-export function getChat (chatid, participantid) {
+export function getChat(chatid, participantid) {
   return dispatch => {
     dispatch(gettingChatInfo())
     return ApiService.getChatInfo(chatid, participantid)
@@ -175,7 +199,7 @@ export function getChat (chatid, participantid) {
   }
 }
 
-export function addParticipant (chatid, participantName) {
+export function addParticipant(chatid, participantName) {
   return dispatch => {
     if (!participantName) {
       dispatch(errorAddingParticipant('Name is required.'))
@@ -189,38 +213,46 @@ export function addParticipant (chatid, participantName) {
   }
 }
 
-export function openChatWebSocket (chatid) {
+export function openChatWebSocket(chatid) {
   return dispatch => {
     dispatch(openingWebsocket())
     return ApiService.startWebsocketConnection()
-      .then(socket => {
+      .then(client => {
         dispatch(websocketOpened())
-        socket.on('connect', function(){
-            console.log('Connected to Stream Server');
-            socket.on('new-message', function(data){
-              console.log('Connected to Stream Server');
-            });
-        });
+        client.onerror = function () {
+          console.log('Connection Error');
+        };
 
-        socket.connect()
+        client.onopen = function () {
+          console.log('WebSocket Client Connected');
+        };
 
-        socket.on('new-message', (data) => {
-          if (data.chatid == chatid) {
-            dispatch(newMessageNotification(data.message, data.participantid, data.timestamp))
+        client.onclose = function () {
+          console.log('echo-protocol Client Closed');
+        };
+
+        client.onmessage = function (e) {
+          console.log('message received');
+          if (typeof e.data === 'string') {
+            let message = JSON.parse(e.data)
+            switch (message.event) {
+              case 'new-message':
+                dispatch(newMessageNotification(message.data.message, message.data.participant, message.data.chatid, new Date()))
+                break;
+
+              case 'new-participant':
+                dispatch(newParticipantNotification(message.data.chatid, message.data.participant))
+                break;
+
+              case 'remove-participant':
+                dispatch(removeParticipantNotification(message.data.chatid, message.data.participant))
+                break;
+
+              default:
+                break;
+            }
           }
-        })
-
-        // socket.on('new-participant', (data) => {
-        //   if (data.chatid == chatid) {
-        //     dispatch(newParticipantNotification(data.participantid))
-        //   }
-        // })
-
-        // socket.on('remove-participant', (data) => {
-        //   if (data.chatid == chatid) {
-        //     dispatch(removeParticipantNotification(data.participantid))
-        //   }
-        // })
+        };
       })
       .catch(error => dispatch(errorOpeningWebsocket(error.message)))
   }
@@ -232,5 +264,19 @@ export function sendMessage(chatid, participantid, message) {
     return ApiService.sendMessage(chatid, participantid, message)
       .then(() => dispatch(messageSent()))
       .catch(error => dispatch(errorSendingMessage(error.message)))
+  }
+}
+
+export function startJoinToChat(chatid, participantName) {
+  return dispatch => {
+    if (!chatid || !participantName) {
+      dispatch(invalidInfoToJoin(!chatid, !participantName))
+    } else {
+      dispatch(joinningToChat())
+      return ApiService.addParticipant(chatid, participantName)
+        .then(json => { return json.resp })
+        .then(resp => dispatch(joinedToChat(resp.chat, resp.participant)))
+        .catch(error => dispatch(errorJoiningToChat(error.message)))
+    }
   }
 }

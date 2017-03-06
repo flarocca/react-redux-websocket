@@ -1,0 +1,35 @@
+.msg-container{
+  display: flex;
+  background-color: rgb(0, 110, 188);
+  flex-direction: column;
+  margin: 0px 20px 20px 0px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.msg-timestamp{
+  font-size: 10px !important;
+}
+
+.msg-name{
+  font-size: 16px;
+}
+
+.msg-message{
+  font-size: 20px;
+}
+
+.msg-left{
+  align-self: flex-start;
+  text-align: left;
+}
+
+.msg-right{
+  align-self: flex-end;
+  text-align: right;
+}
+
+.list {
+  width: 100%;
+  list-style-type: none;
+}

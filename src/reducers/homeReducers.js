@@ -44,19 +44,33 @@ const homeReducers = (state = initialState, action) => {
       return Object.assign({}, state, {
         showErrorMessage: true,
       })
-    case 'START_JOIN_TO_CHAT':
-      if (!action.id || !action.name)
-        return Object.assign({}, state, {
-          showJoinIdErrorMessage: !action.id,
-          showJoinNameErrorMessage: !action.name
-        })
-      else
-        return Object.assign({}, state, {
-          showJoinIdErrorMessage: false,
-          showJoinNameErrorMessage: false,
-          showLoading: true,
-          loadingTitle: 'Joining to chat ' + action.id
-        })
+    case 'INVALID_INFO_TO_JOIN':
+      return Object.assign({}, state, {
+        showJoinIdErrorMessage: action.invalidChat,
+        showJoinNameErrorMessage: action.invalidName
+      })
+    case 'JOINING_TO_CHAT':
+      return Object.assign({}, state, {
+        showJoinIdErrorMessage: false,
+        showJoinNameErrorMessage: false,
+        showLoading: true,
+        loadingTitle: 'Joining to chat...'
+      })
+    case 'JOINED_TO_CHAT':
+      return Object.assign({}, state, {
+        showJoinIdErrorMessage: false,
+        showJoinNameErrorMessage: false,
+        showLoading: false,
+        loadingTitle: null,
+        chatid: action.chatid,
+        participant: action.participant,
+        goToChatPage: true,
+        chatPageUrl: '/chat/' + action.chat.id + '/participant/' + action.participant.id
+      })
+    case 'ERROR_JOINING_TO_CHAT':
+      return Object.assign({}, state, {
+        showErrorMessage: true,
+      })
     default:
       return state
   }

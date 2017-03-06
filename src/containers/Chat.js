@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import './App.css'
 import HeaderChat from '../components/headerChat/HeaderChat'
 import Footer from '../components/common/footer/Footer'
-import Send from '../images/Send'
+import ChatRoom from '../components/chatRoom/ChatRoom'
 import * as actions from '../actions/index'
 import ActivityIndicator from '../components/common/ActivityIndicator'
 import { browserHistory } from 'react-router'
@@ -28,8 +28,8 @@ class Chat extends Component {
     this._renderParticipantNameEntry = this._renderParticipantNameEntry.bind(this)
     this._nameCompleted = this._nameCompleted.bind(this)
     this._getName = this._getName.bind(this)
-    this._sendMessage = this._sendMessage.bind(this);
-    this._getMessage = this._getMessage.bind(this);
+    this._sendMessage = this._sendMessage.bind(this)
+    this._renderParticipant = this._renderParticipant.bind(this)
   }
 
   componentDidMount() {
@@ -43,6 +43,7 @@ class Chat extends Component {
     if (nextProps.reloadPage) {
       this.props.dispatch(actions.pageReloaded())
       browserHistory.push(nextProps.chatPageUrl)
+      this.props.dispatch(actions.openChatWebSocket(this.props.params.chatid, this.props.params.participantid))
     }
   }
 
@@ -55,18 +56,7 @@ class Chat extends Component {
             {this._renderLoadingChat()}
             {this._renderParticipants()}
           </div>
-          <div className='container column chat-room'>
-            <div className='container message-list' />
-            <div className='container row send-message'>
-              <textarea
-                type='text'
-                id='message'
-                className='input-message'
-                placeholder={'Type your message...'}
-                ref='message' />
-              <button className='send-msg-btn' onClick={this._sendMessage}><Send innerColor='white' className='send-icon' /></button>
-            </div>
-          </div>
+          <ChatRoom messages={this.props.messages} onSendClick={this._sendMessage} myId={this.props.params.participantid} />
         </div>
         {this._renderParticipantNameEntry()}
         <Footer />
@@ -88,14 +78,20 @@ class Chat extends Component {
     if (!this.props.loadingChatInfo && !this.props.errorLoadingChat && this.props.chat) {
       return (
         <ul>
-          {this.props.chat.participants.map(function (participant) {
-            return <li key={participant.id}>{participant.name}</li>
-          })}
+          <li key={this.props.params.participantid} style={{ paddingTop: '10px', fontSize: '20px' }}>{'You'}</li>
+          {this.props.chat.participants.map((participant) => { return this._renderParticipant(participant) })}
         </ul>
       )
     } else {
       return null
     }
+  }
+
+  _renderParticipant(participant) {
+    if (this.props.params.participantid == participant.id)
+      return null
+
+    return <li key={participant.id} style={{ paddingTop: '10px', fontSize: '20px' }}>{participant.name}</li>
   }
 
   _renderParticipantNameEntry() {
@@ -130,19 +126,12 @@ class Chat extends Component {
     this.props.dispatch(actions.addParticipant(this.props.params.chatid, name))
   }
 
-  _sendMessage(e) {
-    e.preventDefault()
-    let message = this._getMessage()
-    this.props.dispatch(actions.sendMessage(this.props.params.chatid, this.props.params.participantid, message))
-    this.refs.message.value = null
-  }
-
   _getName() {
     return this.refs.enterName.value
   }
 
-  _getMessage() {
-    return this.refs.message.value
+  _sendMessage(message) {
+    this.props.dispatch(actions.sendMessage(this.props.params.chatid, this.props.params.participantid, message))
   }
 }
 

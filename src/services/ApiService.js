@@ -1,8 +1,5 @@
-let io = require('socket.io-client')
-let socket = null
-
 export default class ApiService {
-  static createNewChat (name) {
+  static createNewChat(name) {
     let _headers = new Headers();
     _headers.append('Content-Type', 'application/json');
 
@@ -37,7 +34,7 @@ export default class ApiService {
     }
   }
 
-  static getChatInfo (chatid, participantid) {
+  static getChatInfo(chatid, participantid) {
     let _headers = new Headers();
     _headers.append('Content-Type', 'application/json');
 
@@ -67,18 +64,16 @@ export default class ApiService {
     }
   }
 
-  static sendMessage (chatId, name, message) {
+  static sendMessage(chatId, participantid, message) {
     let _headers = new Headers()
     _headers.append('Content-Type', 'application/json')
 
     let form = {
-      'chatId': chatId,
-      'name': name,
       'message': message
     }
 
     try {
-      return fetch('http://localhost:3000/api/message', {
+      return fetch('http://localhost:3000/api/chat/' + chatId + '/participant/' + participantid + '/message', {
         method: 'PUT',
         headers: _headers,
         body: JSON.stringify(form)
@@ -104,7 +99,7 @@ export default class ApiService {
     }
   }
 
-  static leaveChat (chatId, name) {
+  static leaveChat(chatId, name) {
     let _headers = new Headers()
     _headers.append('Content-Type', 'application/json')
 
@@ -114,7 +109,7 @@ export default class ApiService {
     }
 
     try {
-      return fetch ('http://localhost:3000/api/chat', {
+      return fetch('http://localhost:3000/api/chat', {
         method: 'DELETE',
         headers: _headers,
         body: JSON.stringify(form)
@@ -140,7 +135,7 @@ export default class ApiService {
     }
   }
 
-  static addParticipant (chatId, name) {
+  static addParticipant(chatId, name) {
     let _headers = new Headers()
     _headers.append('Content-Type', 'application/json')
 
@@ -149,7 +144,7 @@ export default class ApiService {
     }
 
     try {
-      return fetch ('http://localhost:3000/api/chat/' + chatId + '/participant', {
+      return fetch('http://localhost:3000/api/chat/' + chatId + '/participant', {
         method: 'PUT',
         headers: _headers,
         body: JSON.stringify(form)
@@ -175,11 +170,12 @@ export default class ApiService {
     }
   }
 
-  static startWebsocketConnection () {
+  static startWebsocketConnection() {
     return new Promise((resolve, reject) => {
       try {
-        socket = io.connect('http://localhost:3000/api/chat/connect', { path:'/api/chat/connect', reconnect: true, forceNew: true })
-        return resolve(socket)
+        let W3CWebSocket = require('websocket').w3cwebsocket;
+        let client = new W3CWebSocket('ws://localhost:3000/');
+        return resolve(client)
       } catch (error) {
         return reject(error)
       }
