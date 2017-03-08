@@ -3,34 +3,32 @@ import { connect } from 'react-redux'
 import './App.css';
 import Header from '../components/header/Header'
 import Body from './Body'
-import Footer from '../components/common/footer/Footer'
 import ActivityIndicator from '../components/common/ActivityIndicator'
 
 class App extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
 
     this._renderWaiting = this._renderWaiting.bind(this)
   }
 
-  render() {
+  render () {
     return (
-      <div className="App column">
+      <div className='App column'>
         <Header backgroundColor='rgb(91, 164, 215)' />
         <Body />
-        <Footer />
         {this._renderWaiting()}
       </div>
-    );
+    )
   }
 
-  _renderWaiting() {
+  _renderWaiting () {
     if (this.props.showLoading) {
       return (
         <ActivityIndicator title={this.props.loadingTitle} />
-      );
+      )
     } else {
-      return null;
+      return null
     }
   }
 }

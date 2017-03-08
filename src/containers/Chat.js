@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import './App.css'
 import HeaderChat from '../components/headerChat/HeaderChat'
-import Footer from '../components/common/footer/Footer'
 import ChatRoom from '../components/chatRoom/ChatRoom'
 import * as actions from '../actions/index'
 import ActivityIndicator from '../components/common/ActivityIndicator'
@@ -20,7 +19,7 @@ const BORDER_STYLE_NORMAL = {
 }
 
 class Chat extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this._renderLoadingChat = this._renderLoadingChat.bind(this)
@@ -32,14 +31,14 @@ class Chat extends Component {
     this._renderParticipant = this._renderParticipant.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     if (this.props.params.chatid && this.props.params.participantid) {
       this.props.dispatch(actions.getChat(this.props.params.chatid, this.props.params.participantid))
       this.props.dispatch(actions.openChatWebSocket(this.props.params.chatid, this.props.params.participantid))
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.reloadPage) {
       this.props.dispatch(actions.pageReloaded())
       browserHistory.push(nextProps.chatPageUrl)
@@ -47,7 +46,7 @@ class Chat extends Component {
     }
   }
 
-  render() {
+  render () {
     return (
       <div className='Chat column'>
         <HeaderChat chatid={this.props.params.chatid} />
@@ -59,12 +58,11 @@ class Chat extends Component {
           <ChatRoom messages={this.props.messages} onSendClick={this._sendMessage} myId={this.props.params.participantid} />
         </div>
         {this._renderParticipantNameEntry()}
-        <Footer />
       </div>
     )
   }
 
-  _renderLoadingChat() {
+  _renderLoadingChat () {
     if (this.props.loadingChatInfo) {
       return (
         <ActivityIndicator title={'Loading chat info...'} />
@@ -74,7 +72,7 @@ class Chat extends Component {
     }
   }
 
-  _renderParticipants() {
+  _renderParticipants () {
     if (!this.props.loadingChatInfo && !this.props.errorLoadingChat && this.props.chat) {
       return (
         <ul>
@@ -87,14 +85,14 @@ class Chat extends Component {
     }
   }
 
-  _renderParticipant(participant) {
+  _renderParticipant (participant) {
     if (parseInt(this.props.params.participantid, 10) === participant.id)
       return null
 
     return <li key={participant.id} style={{ paddingTop: '10px', fontSize: '20px' }}>{participant.name}</li>
   }
 
-  _renderParticipantNameEntry() {
+  _renderParticipantNameEntry () {
     if (!this.props.params.participantid && !this.props.participant) {
       return (
         <div className='modal'>
@@ -120,17 +118,17 @@ class Chat extends Component {
     }
   }
 
-  _nameCompleted(e) {
+  _nameCompleted (e) {
     e.preventDefault()
     let name = this._getName()
     this.props.dispatch(actions.addParticipant(this.props.params.chatid, name))
   }
 
-  _getName() {
+  _getName () {
     return this.refs.enterName.value
   }
 
-  _sendMessage(message) {
+  _sendMessage (message) {
     this.props.dispatch(actions.sendMessage(this.props.params.chatid, this.props.params.participantid, message))
   }
 }

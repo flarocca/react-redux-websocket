@@ -22,7 +22,7 @@ const BORDER_STYLE_NORMAL = {
 }
 
 class Body extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this._newChat = this._newChat.bind(this)
@@ -35,12 +35,12 @@ class Body extends Component {
     this._showErrorCreatingChat = this._showErrorCreatingChat.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.goToChatPage)
       browserHistory.push(nextProps.chatPageUrl)
   }
 
-  render() {
+  render () {
     return (
       <div className='container column' >
         {this._showErrorCreatingChat()}
@@ -88,19 +88,11 @@ class Body extends Component {
     )
   }
 
-  _getName() {
+  _getName () {
     return this.refs.enterName.value
   }
 
-  _showErrorCreatingChat() {
-    // if (this.props.errorMessage) {
-    //   return (
-    //     <PopUpMessage init={true} message={this.props.errorMessage} time={3000} />
-    //   )
-    // } else {
-    //   return null
-    // }
-    // if (this.props.errorMessages) {
+  _showErrorCreatingChat () {
     return (
       <div className='error-container'>
         {
@@ -112,37 +104,34 @@ class Body extends Component {
         }
       </div>
     )
-    // } else {
-    //   return null
-    // }
   }
 
-  _getJoinId() {
+  _getJoinId () {
     return this.refs.join_id.value
   }
 
-  _getJoinName() {
+  _getJoinName () {
     return this.refs.join_name.value
   }
 
-  _newChat() {
+  _newChat () {
     this.props.dispatch(actions.newChat())
   }
 
-  _joinToChat(id) {
+  _joinToChat (id) {
     this.props.dispatch(actions.joinToChat(id))
   }
 
-  _startNewChat(e) {
+  _startNewChat (e) {
     e.preventDefault()
-    let name = this._getName();
+    let name = this._getName()
     this.props.dispatch(actions.createNewChat(name))
   }
 
-  _joinToChatSelected(e) {
+  _joinToChatSelected (e) {
     e.preventDefault()
-    let id = this._getJoinId();
-    let name = this._getJoinName();
+    let id = this._getJoinId()
+    let name = this._getJoinName()
     this.props.dispatch(actions.startJoinToChat(id, name))
   }
 }

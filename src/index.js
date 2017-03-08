@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './containers/App'
+import Root from './containers/Root'
 import Chat from './containers/Chat'
 import NoMatch from './containers/NoMatch'
 import './index.css'
@@ -20,10 +21,12 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path='/examples/react-redux-websocket' component={App} />
-      <Route path='/examples/react-redux-websocket/chat/:chatid/participant/:participantid' component={Chat} />
-      <Route path='/examples/react-redux-websocket/chat/:chatid' component={Chat} />
-      <Route path='/examples/react-redux-websocket/*' component={NoMatch} />
+      <Route path='/' component={Root}>
+        <Route path='/examples/react-redux-websocket' component={App} />
+        <Route path='/examples/react-redux-websocket/chat/:chatid/participant/:participantid' component={Chat} />
+        <Route path='/examples/react-redux-websocket/chat/:chatid' component={Chat} />
+        <Route path='/*' component={NoMatch} />
+      </Route>
     </Router>
   </Provider>,
   document.getElementById('root')
