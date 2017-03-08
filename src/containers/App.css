@@ -14,7 +14,7 @@
   height: 70px;
   width: 30%;
   align-self: center;
-  margin: 10px;
+  margin-top: 20px;
   border-radius: 10px;
   line-height: 70px;
   text-align: center;
@@ -182,4 +182,12 @@
 
 ul {
   list-style-type: none;
+}
+
+.error-container{
+  flex-direction: column-reverse;
+  display: flex;
+  position: fixed;
+  top: 40px;
+  right: 40px;
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import * as actions from '../actions/index'
 import { browserHistory } from 'react-router'
+import PopUpMessage from '../components/common/PopUpMessage'
 
 const OPTION_CLOSED = '70px'
 const OPTION_OPENED = '180px'
@@ -21,7 +22,7 @@ const BORDER_STYLE_NORMAL = {
 }
 
 class Body extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this._newChat = this._newChat.bind(this)
@@ -31,16 +32,18 @@ class Body extends Component {
     this._getName = this._getName.bind(this)
     this._getJoinId = this._getJoinId.bind(this)
     this._getJoinName = this._getJoinName.bind(this)
+    this._showErrorCreatingChat = this._showErrorCreatingChat.bind(this)
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.goToChatPage)
       browserHistory.push(nextProps.chatPageUrl)
   }
 
-  render () {
+  render() {
     return (
       <div className='container column' >
+        {this._showErrorCreatingChat()}
         <div className='container column option' style={{ height: this.props.newChatSelected ? OPTION_OPENED : OPTION_CLOSED }}>
           <span onClick={this._newChat}>New Chat</span>
           <div className='container column inputContainer' style={{ display: this.props.newChatSelected ? DISPLAY_OPTION_OPENED : DISPLAY_OPTION_CLOSED }}>
@@ -48,9 +51,10 @@ class Body extends Component {
               type='text'
               id='name'
               className='input'
-              style={this.props.showErrorMessage ? BORDER_STYLE_RED : BORDER_STYLE_NORMAL}
+              style={this.props.createChatNameRequired ? BORDER_STYLE_RED : BORDER_STYLE_NORMAL}
               placeholder={'Enter your name'}
               ref='enterName' />
+
             <button
               type='button'
               className='button'
@@ -88,6 +92,31 @@ class Body extends Component {
     return this.refs.enterName.value
   }
 
+  _showErrorCreatingChat() {
+    // if (this.props.errorMessage) {
+    //   return (
+    //     <PopUpMessage init={true} message={this.props.errorMessage} time={3000} />
+    //   )
+    // } else {
+    //   return null
+    // }
+    // if (this.props.errorMessages) {
+    return (
+      <div className='error-container'>
+        {
+          this.props.errorMessages.map((message, i) => {
+            return (
+              <PopUpMessage key={i} message={message} time={3000} />
+            )
+          })
+        }
+      </div>
+    )
+    // } else {
+    //   return null
+    // }
+  }
+
   _getJoinId() {
     return this.refs.join_id.value
   }
@@ -122,13 +151,14 @@ let mapStateToProps = state => {
   return {
     newChatSelected: state.homeReducers.newChatSelected,
     joinChatSelected: state.homeReducers.joinChatSelected,
-    showErrorMessage: state.homeReducers.showErrorMessage,
+    errorMessages: state.homeReducers.errorMessages,
     showJoinIdErrorMessage: state.homeReducers.showJoinIdErrorMessage,
     showJoinNameErrorMessage: state.homeReducers.showJoinNameErrorMessage,
     chatid: state.homeReducers.chatid,
     participant: state.homeReducers.participant,
     goToChatPage: state.homeReducers.goToChatPage,
-    chatPageUrl: state.homeReducers.chatPageUrl
+    chatPageUrl: state.homeReducers.chatPageUrl,
+    createChatNameRequired: state.homeReducers.createChatNameRequired
   }
 }
 

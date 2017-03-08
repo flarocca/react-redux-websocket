@@ -3,7 +3,7 @@ const BASE_URL = '/examples/react-redux-websocket/'
 const initialState = {
   newChatSelected: false,
   joinChatSelected: false,
-  showErrorMessage: false,
+  errorMessages: [],
   showJoinIdErrorMessage: false,
   showJoinNameErrorMessage: false,
   showLoading: false,
@@ -11,7 +11,8 @@ const initialState = {
   chatid: null,
   participant: null,
   goToChatPage: false,
-  chatPageUrl: null
+  chatPageUrl: null,
+  createChatNameRequired: false
 }
 
 const homeReducers = (state = initialState, action) => {
@@ -28,13 +29,13 @@ const homeReducers = (state = initialState, action) => {
       })
     case 'CREATING_NEW_CHAT':
       return Object.assign({}, state, {
-        showErrorMessage: false,
+        errorMessages: [],
         showLoading: true,
         loadingTitle: 'Creating new chat'
       })
     case 'NEW_CHAT_CREATED':
       return Object.assign({}, state, {
-        showErrorMessage: false,
+        errorMessages: [],
         showLoading: false,
         loadingTitle: null,
         chatid: action.chatid,
@@ -44,17 +45,37 @@ const homeReducers = (state = initialState, action) => {
       })
     case 'ERROR_CREATING_CHAT':
       return Object.assign({}, state, {
-        showErrorMessage: true,
+        errorMessages: [
+          ...state.errorMessages,
+          action.errorMessage.toString()
+        ],
+        showLoading: false
+      })
+    case 'ERROR_CREATING_CHAT_NAME_REQUIRED':
+      return Object.assign({}, state, {
+        createChatNameRequired: true,
+        errorMessages: [
+          ...state.errorMessages,
+          action.errorMessage.toString()
+        ]
       })
     case 'INVALID_INFO_TO_JOIN':
+      let errorMessage = action.invalidChat ? 'ChatId is required. ' : ''
+      errorMessage += action.invalidName ? 'Name is required.' : ''
+
       return Object.assign({}, state, {
         showJoinIdErrorMessage: action.invalidChat,
-        showJoinNameErrorMessage: action.invalidName
+        showJoinNameErrorMessage: action.invalidName,
+        errorMessages: [
+          ...state.errorMessages,
+          errorMessage
+        ]
       })
     case 'JOINING_TO_CHAT':
       return Object.assign({}, state, {
         showJoinIdErrorMessage: false,
         showJoinNameErrorMessage: false,
+        errorMessages: [],
         showLoading: true,
         loadingTitle: 'Joining to chat...'
       })
@@ -62,6 +83,7 @@ const homeReducers = (state = initialState, action) => {
       return Object.assign({}, state, {
         showJoinIdErrorMessage: false,
         showJoinNameErrorMessage: false,
+        errorMessages: [],
         showLoading: false,
         loadingTitle: null,
         chatid: action.chatid,
@@ -71,7 +93,11 @@ const homeReducers = (state = initialState, action) => {
       })
     case 'ERROR_JOINING_TO_CHAT':
       return Object.assign({}, state, {
-        showErrorMessage: true,
+        errorMessages: [
+          ...state.errorMessages,
+          action.errorMessage.toString()
+        ],
+        showLoading: false
       })
     default:
       return state

@@ -34,6 +34,13 @@ export const errorCreatingChat = (errorMessage) => {
   }
 }
 
+export const errorCreatingChatNameRequired = () => {
+  return {
+    type: 'ERROR_CREATING_CHAT_NAME_REQUIRED',
+    errorMessage: 'Name is required.'
+  }
+}
+
 export const gettingChatInfo = () => {
   return {
     type: 'GETTING_CHAT_INFO'
@@ -178,13 +185,13 @@ export const errorJoiningToChat = (errorMessage) => {
 export function createNewChat(name) {
   return dispatch => {
     if (!name) {
-      dispatch(errorCreatingChat('Name is required'))
+      dispatch(errorCreatingChatNameRequired())
     } else {
       dispatch(creatingNewChat(name))
       return ApiService.createNewChat(name)
         .then(json => { return json.resp })
         .then(resp => dispatch(newChatCreated(resp.chat, resp.participant)))
-        .catch(error => dispatch(errorCreatingChat(error.message)))
+        .catch(error => dispatch(errorCreatingChat('Ups!!! Server is busy now, try again later.')))
     }
   }
 }
@@ -276,7 +283,7 @@ export function startJoinToChat(chatid, participantName) {
       return ApiService.addParticipant(chatid, participantName)
         .then(json => { return json.resp })
         .then(resp => dispatch(joinedToChat(resp.chat, resp.participant)))
-        .catch(error => dispatch(errorJoiningToChat(error.message)))
+        .catch(error => dispatch(errorJoiningToChat('Ups!!! Server is busy now, try again later.')))
     }
   }
 }
