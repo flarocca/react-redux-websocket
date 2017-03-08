@@ -20,7 +20,7 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
-      <Route path='/examples/react-redux-websocket/' component={App} />
+      <Route path='/examples/react-redux-websocket' component={App} />
       <Route path='/examples/react-redux-websocket/chat/:chatid/participant/:participantid' component={Chat} />
       <Route path='/examples/react-redux-websocket/chat/:chatid' component={Chat} />
       <Route path='/examples/react-redux-websocket/*' component={NoMatch} />
