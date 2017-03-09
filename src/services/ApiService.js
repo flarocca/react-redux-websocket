@@ -66,6 +66,36 @@ export default class ApiService {
     }
   }
 
+  static getChat(chatid) {
+    let _headers = new Headers();
+    _headers.append('Content-Type', 'application/json');
+
+    try {
+      return fetch(BASE_URL + chatid, {
+        method: 'GET',
+        headers: _headers
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+              .then((responseData) => {
+                return responseData;
+              });
+          }
+
+          return response.json()
+            .then((error) => {
+              return Promise.reject(error);
+            });
+        })
+        .catch((error) => {
+          return Promise.reject(error);
+        });
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
   static sendMessage(chatId, participantid, message) {
     let _headers = new Headers()
     _headers.append('Content-Type', 'application/json')

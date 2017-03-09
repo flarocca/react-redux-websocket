@@ -47,6 +47,12 @@ export const gettingChatInfo = () => {
   }
 }
 
+export const gettingChat = () => {
+  return {
+    type: 'GETTING_CHAT'
+  }
+}
+
 export const chatInfoReceived = (chat, participant) => {
   return {
     type: 'CHAT_INFO_RECEIVED',
@@ -55,10 +61,25 @@ export const chatInfoReceived = (chat, participant) => {
   }
 }
 
+export const chatReceived = (chat) => {
+  return {
+    type: 'CHAT_RECEIVED',
+    chat
+  }
+}
+
 export const errorGettingChatInfo = (errorMessage) => {
   return {
     type: 'ERROR_GETTING_INFO_CHAT',
     errorMessage
+  }
+}
+
+export const errorGettingChat = (errorMessage, errorCode) => {
+  return {
+    type: 'ERROR_GETTING_CHAT',
+    errorMessage,
+    errorCode
   }
 }
 
@@ -196,13 +217,42 @@ export function createNewChat(name) {
   }
 }
 
-export function getChat(chatid, participantid) {
+export const closingChat = () => {
+  return {
+    type: 'CLOSING_CHAT'
+  }
+}
+
+export const chatClosed = () => {
+  return {
+    type: 'CHAT_CLOSED'
+  }
+}
+
+export const errorErrorChat = (errorMessage) => {
+  return {
+    type: 'ERROR_CLOSING_CHAT',
+    errorMessage
+  }
+}
+
+export function getChatInfo(chatid, participantid) {
   return dispatch => {
     dispatch(gettingChatInfo())
     return ApiService.getChatInfo(chatid, participantid)
       .then(json => { return json.resp })
       .then(resp => dispatch(chatInfoReceived(resp.chat, resp.participant)))
       .catch(error => dispatch(errorGettingChatInfo(error.message)))
+  }
+}
+
+export function getChat(chatid) {
+  return dispatch => {
+    dispatch(gettingChat())
+    return ApiService.getChat(chatid)
+      .then(json => { return json.resp })
+      .then(resp => dispatch(chatReceived(resp.chat)))
+      .catch(error => dispatch(errorGettingChat(error.message, error.code)))
   }
 }
 
@@ -285,5 +335,14 @@ export function startJoinToChat(chatid, participantName) {
         .then(resp => dispatch(joinedToChat(resp.chat, resp.participant)))
         .catch(error => dispatch(errorJoiningToChat('Ups!!! Server is busy now, try again later.')))
     }
+  }
+}
+
+export function closeChat(chatid, participantid) {
+  return dispatch => {
+    dispatch(closingChat())
+    return ApiService.closeChat(chatid, participantid)
+      .then(resp => dispatch(chatClosed()))
+      .catch(error => dispatch(errorClosingChat(error.message)))
   }
 }

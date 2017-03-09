@@ -2,8 +2,10 @@ const BASE_URL = '/examples/react-redux-websocket/'
 
 let initialState = {
   loadingChatInfo: false,
+  loadingChat: false,
   addingParticipant: false,
   errorLoadingChat: null,
+  errorCodeLoadingChat: null,
   errorAddingParticipant: null,
   chat: null,
   participant: null,
@@ -11,12 +13,34 @@ let initialState = {
   reloadPage: false,
   messages: [],
   sendingMessage: false,
-  errorSendingMessage: null
+  errorSendingMessage: null,
+  goToHome: false
 }
 
 const chatReducers = (state = initialState, action) => {
   let chat = null
   switch (action.type) {
+    case 'GETTING_CHAT':
+      return Object.assign({}, state, {
+        loadingChat: true,
+        reloadPage: false,
+        goToHome: false
+      })
+    case 'CHAT_RECEIVED':
+      return Object.assign({}, state, {
+        loadingChat: false,
+        chat: action.chat,
+        reloadPage: false,
+        goToHome: false
+      })
+    case 'ERROR_GETTING_CHAT':
+      return Object.assign({}, state, {
+        loadingChat: false,
+        errorLoadingChat: action.errorMessage,
+        errorCodeLoadingChat: action.errorCode,
+        reloadPage: false,
+        goToHome: true
+      })
     case 'GETTING_CHAT_INFO':
       return Object.assign({}, state, {
         loadingChatInfo: true,
