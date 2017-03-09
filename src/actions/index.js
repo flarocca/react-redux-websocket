@@ -203,7 +203,26 @@ export const errorJoiningToChat = (errorMessage) => {
   }
 }
 
-export function createNewChat(name) {
+export const closingChat = () => {
+  return {
+    type: 'CLOSING_CHAT'
+  }
+}
+
+export const chatClosed = () => {
+  return {
+    type: 'CHAT_CLOSED'
+  }
+}
+
+export const errorClosingChat = (errorMessage) => {
+  return {
+    type: 'ERROR_CLOSING_CHAT',
+    errorMessage
+  }
+}
+
+export function createNewChat (name) {
   return dispatch => {
     if (!name) {
       dispatch(errorCreatingChatNameRequired())
@@ -217,26 +236,7 @@ export function createNewChat(name) {
   }
 }
 
-export const closingChat = () => {
-  return {
-    type: 'CLOSING_CHAT'
-  }
-}
-
-export const chatClosed = () => {
-  return {
-    type: 'CHAT_CLOSED'
-  }
-}
-
-export const errorErrorChat = (errorMessage) => {
-  return {
-    type: 'ERROR_CLOSING_CHAT',
-    errorMessage
-  }
-}
-
-export function getChatInfo(chatid, participantid) {
+export function getChatInfo (chatid, participantid) {
   return dispatch => {
     dispatch(gettingChatInfo())
     return ApiService.getChatInfo(chatid, participantid)

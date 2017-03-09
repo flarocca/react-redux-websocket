@@ -14,7 +14,9 @@ let initialState = {
   messages: [],
   sendingMessage: false,
   errorSendingMessage: null,
-  goToHome: false
+  goToHome: false,
+  closingChat: false,
+  errorClosingChat: null
 }
 
 const chatReducers = (state = initialState, action) => {
@@ -110,7 +112,7 @@ const chatReducers = (state = initialState, action) => {
         return state
 
       chat = Object.assign({}, state.chat)
-      let pos = -1;
+      let pos = -1
       for (let i = 0; i < chat.participants.length; i++) {
         if (chat.participants[i].id === action.participant.id) {
           pos = i
@@ -118,7 +120,7 @@ const chatReducers = (state = initialState, action) => {
         }
       }
       if (pos > -1)
-        chat.participants.splice(pos, 1);
+        chat.participants.splice(pos, 1)
 
       return Object.assign({}, state, {
         chat
@@ -137,6 +139,19 @@ const chatReducers = (state = initialState, action) => {
       return Object.assign({}, state, {
         sendingMessage: false,
         errorSendingMessage: action.errorMessage
+      })
+    case 'CLOSING_CHAT':
+      return Object.assign({}, state, {
+        closingChat: true
+      })
+    case 'CHAT_CLOSED':
+      return Object.assign({}, initialState, {
+        goToHome: true
+      })
+    case 'ERROR_CLOSING_CHAT':
+      return Object.assign({}, state, {
+        closingChat: false,
+        errorClosingChat: action.errorMessage
       })
     default:
       return state
