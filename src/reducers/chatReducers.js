@@ -108,13 +108,14 @@ const chatReducers = (state = initialState, action) => {
         chat
       })
     case 'REMOVE_PARTICIPANT_NOTIFICATION':
-      if (state.chat.id !== parseInt(action.chatid, 10))
+      if(!state.chat || !state.participant) return state
+      if ((state.chat.id !== parseInt(action.chatid, 10)) || (state.participant.id === parseInt(action.participanid, 10)))
         return state
 
       chat = Object.assign({}, state.chat)
       let pos = -1
       for (let i = 0; i < chat.participants.length; i++) {
-        if (chat.participants[i].id === action.participant.id) {
+        if (chat.participants[i].id === parseInt(action.participanid, 10)) {
           pos = i
           break
         }
@@ -153,6 +154,8 @@ const chatReducers = (state = initialState, action) => {
         closingChat: false,
         errorClosingChat: action.errorMessage
       })
+    case 'RESET':
+      return Object.assign({}, initialState)
     default:
       return state
   }

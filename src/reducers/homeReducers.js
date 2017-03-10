@@ -95,10 +95,12 @@ const homeReducers = (state = initialState, action) => {
       return Object.assign({}, state, {
         errorMessages: [
           ...state.errorMessages,
-          action.errorMessage.toString()
+          action.errorCode === 400 ? 'Ups!!! The server is busy now. Try again later.' : action.errorMessage.toString()
         ],
         showLoading: false
       })
+    case 'RESET':
+      return Object.assign({}, initialState)
     default:
       return state
   }

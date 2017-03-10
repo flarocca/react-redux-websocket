@@ -38,6 +38,8 @@ class Chat extends Component {
       this.props.dispatch(actions.pageReloaded())
       browserHistory.push(nextProps.chatPageUrl)
       this.props.dispatch(actions.openChatWebSocket(this.props.params.chatid, this.props.params.participantid))
+    } else if (nextProps.goToHome && ! nextProps.errorLoadingChat) {
+      this._return()
     }
   }
 
@@ -54,7 +56,7 @@ class Chat extends Component {
               <button
                 type='button'
                 className='exit-button'
-                onClick={this._closeChat}>Exit Group</button>
+                onClick={this._closeChat}>Exit Chat</button>
             </div>
           </div>
           <ChatRoom messages={this.props.messages} onSendClick={this._sendMessage} myId={this.props.params.participantid} />
@@ -110,7 +112,7 @@ class Chat extends Component {
   }
 
   _renderGotoHome() {
-    if (this.props.goToHome) {
+    if (this.props.errorLoadingChat) {
       return (
         <ModalMessage onClick={this._return} message={'Chat does not exist.'} />
       )
@@ -124,6 +126,7 @@ class Chat extends Component {
   }
 
   _return() {
+    this.props.dispatch(actions.reset())
     browserHistory.push('/examples/react-redux-websocket')
   }
 
@@ -131,8 +134,8 @@ class Chat extends Component {
     this.props.dispatch(actions.sendMessage(this.props.params.chatid, this.props.params.participantid, message))
   }
 
-  _closeChat(){
-    this.props.dispatch(actions.closeChat(this.props.params.chatid, this.props.params.participantid))    
+  _closeChat() {
+    this.props.dispatch(actions.closeChat(this.props.params.chatid, this.props.params.participantid))
   }
 }
 

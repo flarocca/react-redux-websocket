@@ -1,5 +1,11 @@
 import ApiService from '../services/ApiService'
 
+export const reset = () => {
+  return {
+    type: 'RESET'
+  }
+}
+
 export const newChat = () => {
   return {
     type: 'NEW_CHAT'
@@ -147,11 +153,11 @@ export const newParticipantNotification = (chatid, participant) => {
   }
 }
 
-export const removeParticipantNotification = (chatid, participant) => {
+export const removeParticipantNotification = (chatid, participanid) => {
   return {
     type: 'REMOVE_PARTICIPANT_NOTIFICATION',
     chatid,
-    participant
+    participanid
   }
 }
 
@@ -196,9 +202,10 @@ export const joinedToChat = (chat, participant) => {
   }
 }
 
-export const errorJoiningToChat = (errorMessage) => {
+export const errorJoiningToChat = (errorCode, errorMessage) => {
   return {
     type: 'ERROR_JOINING_TO_CHAT',
+    errorCode,
     errorMessage
   }
 }
@@ -240,9 +247,15 @@ export function getChatInfo (chatid, participantid) {
   return dispatch => {
     dispatch(gettingChatInfo())
     return ApiService.getChatInfo(chatid, participantid)
-      .then(json => { return json.resp })
-      .then(resp => dispatch(chatInfoReceived(resp.chat, resp.participant)))
-      .catch(error => dispatch(errorGettingChatInfo(error.message)))
+      .then(json => { 
+        return json.resp 
+      })
+      .then(resp => {
+        dispatch(chatInfoReceived(resp.chat, resp.participant))
+      })
+      .catch(error => {
+        dispatch(errorGettingChatInfo(error.message))
+      })
   }
 }
 
@@ -250,9 +263,15 @@ export function getChat(chatid) {
   return dispatch => {
     dispatch(gettingChat())
     return ApiService.getChat(chatid)
-      .then(json => { return json.resp })
-      .then(resp => dispatch(chatReceived(resp.chat)))
-      .catch(error => dispatch(errorGettingChat(error.message, error.code)))
+      .then(json => { 
+        return json.resp 
+      })
+      .then(resp => {
+        dispatch(chatReceived(resp.chat))
+      })
+      .catch(error => {
+        dispatch(errorGettingChat(error.message, error.code))
+      })
   }
 }
 
@@ -333,7 +352,7 @@ export function startJoinToChat(chatid, participantName) {
       return ApiService.addParticipant(chatid, participantName)
         .then(json => { return json.resp })
         .then(resp => dispatch(joinedToChat(resp.chat, resp.participant)))
-        .catch(error => dispatch(errorJoiningToChat('Ups!!! Server is busy now, try again later.')))
+        .catch(error => dispatch(errorJoiningToChat(error.code, error.message)))
     }
   }
 }

@@ -177,4 +177,34 @@ export default class ApiService {
       }
     })
   }
+
+  static closeChat(chatId, participantid) {
+    let _headers = new Headers()
+    _headers.append('Content-Type', 'application/json')
+
+    try {
+      return fetch(BASE_URL + chatId + '/participant/' + participantid, {
+        method: 'DELETE',
+        headers: _headers
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json()
+              .then((responseData) => {
+                return responseData
+              })
+          }
+
+          return response.json()
+            .then((error) => {
+              return Promise.reject(error)
+            })
+        })
+        .catch((error) => {
+          return Promise.reject(error)
+        })
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
 }
