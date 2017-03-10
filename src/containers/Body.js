@@ -42,7 +42,7 @@ class Body extends Component {
 
   render () {
     return (
-      <div className='container column' >
+      <div id='body' className='container column' >
         {this._showErrorCreatingChat()}
         <div className='container column option' style={{ height: this.props.newChatSelected ? OPTION_OPENED : OPTION_CLOSED }}>
           <span onClick={this._newChat}>New Chat</span>
