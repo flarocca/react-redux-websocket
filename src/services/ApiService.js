@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8081/api/chat/'
+const BASE_URL = 'http://www.facundolarocca.com:8081/api/chat/'
 
 export default class ApiService {
   static createNewChat(name) {
