@@ -170,7 +170,7 @@ export default class ApiService {
     return new Promise((resolve, reject) => {
       try {
         let W3CWebSocket = require('websocket').w3cwebsocket;
-        let client = new W3CWebSocket('ws://localhost:8081/');
+        let client = new W3CWebSocket('ws://www.facundolarocca.com:8081/');
         return resolve(client)
       } catch (error) {
         return reject(error)
